@@ -1,0 +1,17 @@
+[package]
+name = "rustcalc"
+version = "0.1.0"
+edition = "2021"
+description = "A standard desktop calculator GUI built in Rust using Zed's GPUI framework."
+
+[dependencies]
+gpui = "0.2"
+unicode-segmentation = "1"
+
+[lib]
+name = "rustcalc"
+path = "src/lib.rs"
+
+[[bin]]
+name = "rustcalc"
+path = "src/main.rs"
