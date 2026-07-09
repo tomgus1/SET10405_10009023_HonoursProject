@@ -1,0 +1,18 @@
+appId: dev.timgraham.reactcalc
+productName: React Native Calculator
+icon: ../assets/icon.png
+directories:
+  output: release
+files:
+  - out/**/*
+extraResources:
+  - from: ../web-build
+    to: web-build
+linux:
+  target: AppImage
+  category: Utility
+mac:
+  target: dmg
+  category: public.app-category.utilities
+win:
+  target: nsis

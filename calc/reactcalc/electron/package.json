@@ -1,0 +1,23 @@
+{
+  "name": "reactcalc-electron",
+  "version": "1.0.0",
+  "description": "Desktop wrapper for the React Native Calculator",
+  "author": "Tim Graham",
+  "private": true,
+  "main": "out/main/index.js",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "package": "electron-vite build && electron-builder",
+    "package:linux": "electron-vite build && electron-builder --linux",
+    "package:win": "electron-vite build && electron-builder --win",
+    "package:mac": "electron-vite build && electron-builder --mac"
+  },
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^25.1.8",
+    "electron-vite": "^2.3.0",
+    "typescript": "~5.6.0",
+    "vite": "^5.4.0"
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "name": "reactcalc",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "dependencies": {
+    "expo": "~57.0.11",
+    "expo-status-bar": "~57.0.1",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-native": "0.86.2",
+    "react-native-web": "^0.21.2"
+  },
+  "devDependencies": {
+    "@types/jest": "29.5.14",
+    "@types/react": "~19.2.2",
+    "concurrently": "^10.0.4",
+    "cross-env": "^10.1.0",
+    "jest": "~29.7.0",
+    "jest-expo": "~57.0.3",
+    "typescript": "~6.0.3"
+  },
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "web:export": "expo export --platform web --output-dir web-build",
+    "test": "jest",
+    "desktop:install": "npm install --prefix electron",
+    "desktop": "npm run web:export && npm run dev --prefix electron",
+    "desktop:watch": "concurrently -k -n EXPO,ELECTRON -c blue,green \"npm:web\" \"cross-env EXPO_WEB_URL=http://localhost:8081 npm run dev --prefix electron\"",
+    "desktop:package": "npm run web:export && npm run package --prefix electron",
+    "desktop:package:linux": "npm run web:export && npm run package:linux --prefix electron",
+    "desktop:package:win": "npm run web:export && npm run package:win --prefix electron",
+    "desktop:package:mac": "npm run web:export && npm run package:mac --prefix electron"
+  },
+  "private": true,
+  "jest": {
+    "preset": "jest-expo"
+  }
+}
