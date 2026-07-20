@@ -1,0 +1,61 @@
+{
+  "name": "reactnotes",
+  "version": "1.0.0",
+  "description": "A simple notes app built with React Native (Expo) and TypeScript, packaged for mobile and desktop.",
+  "author": "Tim Graham",
+  "main": "index.ts",
+  "dependencies": {
+    "@react-native-async-storage/async-storage": "2.2.0",
+    "expo": "~57.0.11",
+    "expo-status-bar": "~57.0.1",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-native": "0.86.2",
+    "react-native-web": "^0.21.2"
+  },
+  "devDependencies": {
+    "@types/react": "~19.2.2",
+    "electron": "^43.3.0",
+    "electron-builder": "^26.15.3",
+    "typescript": "~6.0.3"
+  },
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "build:web": "expo export --platform web",
+    "electron": "electron electron/main.js",
+    "desktop": "npm run build:web && npm run electron",
+    "desktop:package": "npm run build:web && electron-builder",
+    "desktop:package:linux": "npm run build:web && electron-builder --linux",
+    "desktop:package:win": "npm run build:web && electron-builder --win",
+    "desktop:package:mac": "npm run build:web && electron-builder --mac"
+  },
+  "private": true,
+  "build": {
+    "appId": "dev.timgraham.notesapp",
+    "productName": "Notes App",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "electron/**/*",
+      "dist/**/*",
+      "!node_modules/**/*"
+    ],
+    "extraMetadata": {
+      "main": "electron/main.js"
+    },
+    "linux": {
+      "target": ["AppImage"],
+      "category": "Utility"
+    },
+    "win": {
+      "target": ["nsis"]
+    },
+    "mac": {
+      "target": ["dmg"]
+    }
+  }
+}
