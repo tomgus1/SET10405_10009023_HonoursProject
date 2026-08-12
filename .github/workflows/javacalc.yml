@@ -55,4 +55,5 @@ jobs:
 
       - uses: softprops/action-gh-release@v2
         with:
+          body: "Calculator app — Java (Swing + Maven)."
           files: dist/**

@@ -76,4 +76,5 @@ jobs:
 
       - uses: softprops/action-gh-release@v2
         with:
+          body: "Calculator app — React Native (Expo), packaged as a desktop app with Electron."
           files: dist/**
