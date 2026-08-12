@@ -34,10 +34,6 @@ jobs:
 
       - uses: dtolnay/rust-toolchain@stable
 
-      - uses: Swatinem/rust-cache@v2
-        with:
-          workspaces: calc/rustcalc
-
       - name: Install Linux GUI dependencies
         if: runner.os == 'Linux'
         run: |
