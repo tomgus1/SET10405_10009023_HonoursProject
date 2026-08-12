@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 use crate::model::Note;
 
@@ -25,9 +25,16 @@ impl FileNoteRepository {
     }
 
     pub fn create_default() -> Self {
-        let home = std::env::var_os("HOME").expect("HOME environment variable must be set");
-        let storage_dir = Path::new(&home).join(".notes-app");
+        let home = Self::home_dir().expect("could not determine the user's home directory");
+        let storage_dir = home.join(".notes-app");
         Self::new(storage_dir.join("notes.json"))
+    }
+
+    fn home_dir() -> Option<PathBuf> {
+        // Unix sets HOME; Windows sets USERPROFILE instead.
+        std::env::var_os("HOME")
+            .or_else(|| std::env::var_os("USERPROFILE"))
+            .map(PathBuf::from)
     }
 
     fn load_from_disk(&mut self) {

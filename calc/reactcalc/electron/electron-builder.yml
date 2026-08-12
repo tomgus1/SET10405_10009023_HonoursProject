@@ -8,6 +8,7 @@ files:
 extraResources:
   - from: ../web-build
     to: web-build
+afterSign: afterSign.js
 linux:
   target: AppImage
   category: Utility

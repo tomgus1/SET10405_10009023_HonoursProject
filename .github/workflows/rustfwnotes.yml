@@ -62,6 +62,10 @@ jobs:
           name: rustfwnotes-linux
           path: notes/rustfwnotes/*.AppImage
 
+      - name: Ad-hoc codesign macOS binary
+        if: runner.os == 'macOS'
+        run: codesign --force --sign - target/release/notes-app
+
       - name: Upload build
         if: runner.os != 'Linux'
         uses: actions/upload-artifact@v4

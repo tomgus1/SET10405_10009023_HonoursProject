@@ -47,6 +47,7 @@
     "extraMetadata": {
       "main": "electron/main.js"
     },
+    "afterSign": "afterSign.js",
     "linux": {
       "target": ["AppImage"],
       "category": "Utility"

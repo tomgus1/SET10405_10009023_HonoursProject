@@ -62,6 +62,10 @@ jobs:
           name: rustcalc-linux
           path: calc/rustcalc/*.AppImage
 
+      - name: Ad-hoc codesign macOS binary
+        if: runner.os == 'macOS'
+        run: codesign --force --sign - target/release/rustcalc
+
       - name: Upload build
         if: runner.os != 'Linux'
         uses: actions/upload-artifact@v4

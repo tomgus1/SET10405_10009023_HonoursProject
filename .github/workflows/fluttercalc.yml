@@ -67,6 +67,10 @@ jobs:
           name: fluttercalc-linux
           path: calc/fluttercalc/*.AppImage
 
+      - name: Ad-hoc codesign macOS app
+        if: matrix.platform == 'macos'
+        run: codesign --force --deep --sign - "build/macos/Build/Products/Release/flutter_calc.app"
+
       - name: Upload build
         if: matrix.platform != 'linux'
         uses: actions/upload-artifact@v4

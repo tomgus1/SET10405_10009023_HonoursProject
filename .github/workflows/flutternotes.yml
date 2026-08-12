@@ -67,6 +67,10 @@ jobs:
           name: flutternotes-linux
           path: notes/flutternotes/*.AppImage
 
+      - name: Ad-hoc codesign macOS app
+        if: matrix.platform == 'macos'
+        run: codesign --force --deep --sign - "build/macos/Build/Products/Release/notes_app.app"
+
       - name: Upload build
         if: matrix.platform != 'linux'
         uses: actions/upload-artifact@v4
