@@ -1,0 +1,57 @@
+name: Build rustfwnotes
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'notes/rustfwnotes/**'
+      - '.github/workflows/rustfwnotes.yml'
+  pull_request:
+    paths:
+      - 'notes/rustfwnotes/**'
+      - '.github/workflows/rustfwnotes.yml'
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: notes/rustfwnotes
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            bin_suffix: ''
+          - os: windows-latest
+            bin_suffix: '.exe'
+          - os: macos-latest
+            bin_suffix: ''
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: notes/rustfwnotes
+
+      - name: Install Linux GUI dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libasound2-dev libfontconfig-dev libglib2.0-dev libssl-dev \
+            libvulkan1 mesa-vulkan-drivers libwayland-dev libx11-xcb-dev \
+            libxkbcommon-x11-dev libzstd-dev pkg-config cmake clang
+
+      - run: cargo test --release
+
+      - run: cargo build --release
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rustfwnotes-${{ matrix.os }}
+          path: notes/rustfwnotes/target/release/notes-app${{ matrix.bin_suffix }}

@@ -1,0 +1,41 @@
+name: Build javacalc
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'calc/javacalc/**'
+      - '.github/workflows/javacalc.yml'
+  pull_request:
+    paths:
+      - 'calc/javacalc/**'
+      - '.github/workflows/javacalc.yml'
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: calc/javacalc
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+          cache-dependency-path: calc/javacalc/pom.xml
+
+      - run: mvn -B package
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: javacalc-${{ matrix.os }}
+          path: calc/javacalc/target/*.jar

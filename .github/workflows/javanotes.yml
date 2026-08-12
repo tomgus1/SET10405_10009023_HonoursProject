@@ -1,0 +1,41 @@
+name: Build javanotes
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'notes/javanotes/**'
+      - '.github/workflows/javanotes.yml'
+  pull_request:
+    paths:
+      - 'notes/javanotes/**'
+      - '.github/workflows/javanotes.yml'
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: notes/javanotes
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+          cache-dependency-path: notes/javanotes/pom.xml
+
+      - run: mvn -B package
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: javanotes-${{ matrix.os }}
+          path: notes/javanotes/target/*.jar

@@ -1,0 +1,57 @@
+name: Build rustfwcalc
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'calc/rustfwcalc/**'
+      - '.github/workflows/rustfwcalc.yml'
+  pull_request:
+    paths:
+      - 'calc/rustfwcalc/**'
+      - '.github/workflows/rustfwcalc.yml'
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: calc/rustfwcalc
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            bin_suffix: ''
+          - os: windows-latest
+            bin_suffix: '.exe'
+          - os: macos-latest
+            bin_suffix: ''
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: calc/rustfwcalc
+
+      - name: Install Linux GUI dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libasound2-dev libfontconfig-dev libglib2.0-dev libssl-dev \
+            libvulkan1 mesa-vulkan-drivers libwayland-dev libx11-xcb-dev \
+            libxkbcommon-x11-dev libzstd-dev pkg-config cmake clang
+
+      - run: cargo test --release
+
+      - run: cargo build --release
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rustfwcalc-${{ matrix.os }}
+          path: calc/rustfwcalc/target/release/rustcalc${{ matrix.bin_suffix }}
