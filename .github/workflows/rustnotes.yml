@@ -43,9 +43,11 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y \
-            libasound2-dev libfontconfig-dev libglib2.0-dev libssl-dev \
-            libvulkan1 mesa-vulkan-drivers libwayland-dev libx11-xcb-dev \
-            libxkbcommon-x11-dev libzstd-dev pkg-config cmake clang
+            gcc g++ libasound2-dev libfontconfig-dev libgit2-dev libglib2.0-dev \
+            libssl-dev libva-dev libvulkan1 libwayland-dev libx11-xcb-dev \
+            libxkbcommon-x11-dev libzstd-dev make cmake clang lld llvm jq \
+            gettext-base elfutils libsqlite3-dev build-essential pkg-config \
+            pipewire xdg-desktop-portal libstdc++-12-dev
 
       - run: cargo test --release
 
