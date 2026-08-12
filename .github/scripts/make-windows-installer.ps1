@@ -14,6 +14,7 @@ AppName=$AppId
 AppVersion=1.0
 DefaultDirName={autopf}\$AppId
 DefaultGroupName=$AppId
+OutputDir=.
 OutputBaseFilename=$AppId-setup
 Compression=lzma
 SolidCompression=yes
