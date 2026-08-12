@@ -3,6 +3,7 @@ name: Build reactcalc
 on:
   push:
     branches: [main]
+    tags: ['reactcalc-v*']
     paths:
       - 'calc/reactcalc/**'
       - '.github/workflows/reactcalc.yml'
@@ -55,4 +56,24 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: reactcalc-${{ matrix.platform }}
-          path: calc/reactcalc/electron/release/**
+          path: |
+            calc/reactcalc/electron/release/*.dmg
+            calc/reactcalc/electron/release/*.exe
+            calc/reactcalc/electron/release/*.AppImage
+
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/reactcalc-v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: reactcalc-*
+          path: dist
+          merge-multiple: true
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dist/**

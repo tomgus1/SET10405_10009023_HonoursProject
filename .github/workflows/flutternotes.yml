@@ -3,6 +3,7 @@ name: Build flutternotes
 on:
   push:
     branches: [main]
+    tags: ['flutternotes-v*']
     paths:
       - 'notes/flutternotes/**'
       - '.github/workflows/flutternotes.yml'
@@ -24,13 +25,10 @@ jobs:
         include:
           - os: ubuntu-22.04
             platform: linux
-            artifact_path: build/linux/x64/release/bundle
           - os: windows-latest
             platform: windows
-            artifact_path: build/windows/x64/runner/Release
           - os: macos-latest
             platform: macos
-            artifact_path: build/macos/Build/Products/Release
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -67,13 +65,48 @@ jobs:
           name: flutternotes-linux
           path: notes/flutternotes/*.AppImage
 
-      - name: Ad-hoc codesign macOS app
-        if: matrix.platform == 'macos'
-        run: codesign --force --deep --sign - "build/macos/Build/Products/Release/notes_app.app"
+      - name: Package Windows installer
+        if: matrix.platform == 'windows'
+        shell: pwsh
+        run: |
+          ..\..\.github\scripts\make-windows-installer.ps1 `
+            -AppId flutternotes `
+            -SourceDir "build\windows\x64\runner\Release" `
+            -ExeName notes_app.exe
 
-      - name: Upload build
-        if: matrix.platform != 'linux'
+      - name: Upload Windows installer
+        if: matrix.platform == 'windows'
         uses: actions/upload-artifact@v4
         with:
-          name: flutternotes-${{ matrix.platform }}
-          path: notes/flutternotes/${{ matrix.artifact_path }}
+          name: flutternotes-windows
+          path: notes/flutternotes/flutternotes-setup.exe
+
+      - name: Package macOS DMG
+        if: matrix.platform == 'macos'
+        run: |
+          ../../.github/scripts/make-macos-dmg.sh flutternotes \
+            --app "build/macos/Build/Products/Release/notes_app.app"
+
+      - name: Upload macOS DMG
+        if: matrix.platform == 'macos'
+        uses: actions/upload-artifact@v4
+        with:
+          name: flutternotes-macos
+          path: notes/flutternotes/flutternotes.dmg
+
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/flutternotes-v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: flutternotes-*
+          path: dist
+          merge-multiple: true
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dist/**

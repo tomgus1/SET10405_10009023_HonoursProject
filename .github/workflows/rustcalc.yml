@@ -3,6 +3,7 @@ name: Build rustcalc
 on:
   push:
     branches: [main]
+    tags: ['rustcalc-v*']
     paths:
       - 'calc/rustcalc/**'
       - '.github/workflows/rustcalc.yml'
@@ -60,13 +61,37 @@ jobs:
           name: rustcalc-linux
           path: calc/rustcalc/*.AppImage
 
-      - name: Ad-hoc codesign macOS binary
+      - name: Package macOS DMG
         if: runner.os == 'macOS'
-        run: codesign --force --sign - target/release/rustcalc
+        run: ../../.github/scripts/make-macos-dmg.sh rustcalc --bin target/release/rustcalc
 
-      - name: Upload build
-        if: runner.os != 'Linux'
+      - name: Upload macOS DMG
+        if: runner.os == 'macOS'
         uses: actions/upload-artifact@v4
         with:
-          name: rustcalc-${{ matrix.os }}
+          name: rustcalc-macos
+          path: calc/rustcalc/rustcalc.dmg
+
+      - name: Upload Windows build
+        if: runner.os == 'Windows'
+        uses: actions/upload-artifact@v4
+        with:
+          name: rustcalc-windows
           path: calc/rustcalc/target/release/rustcalc${{ matrix.bin_suffix }}
+
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/rustcalc-v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: rustcalc-*
+          path: dist
+          merge-multiple: true
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dist/**
