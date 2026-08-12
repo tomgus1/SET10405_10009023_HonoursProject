@@ -22,7 +22,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-latest
+          - os: ubuntu-22.04
             platform: linux
             artifact_path: build/linux/x64/release/bundle
           - os: windows-latest
@@ -52,7 +52,24 @@ jobs:
 
       - run: flutter build ${{ matrix.platform }} --release
 
-      - uses: actions/upload-artifact@v4
+      - name: Package Linux AppImage
+        if: matrix.platform == 'linux'
+        run: |
+          ../../.github/scripts/make-appimage.sh flutternotes \
+            build/linux/x64/release/bundle/notes_app \
+            build/linux/x64/release/bundle \
+            macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_512.png
+
+      - name: Upload Linux AppImage
+        if: matrix.platform == 'linux'
+        uses: actions/upload-artifact@v4
+        with:
+          name: flutternotes-linux
+          path: notes/flutternotes/*.AppImage
+
+      - name: Upload build
+        if: matrix.platform != 'linux'
+        uses: actions/upload-artifact@v4
         with:
           name: flutternotes-${{ matrix.platform }}
           path: notes/flutternotes/${{ matrix.artifact_path }}
